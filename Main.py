@@ -1,38 +1,75 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
+import random
 
-# 🎯 Title
-st.title("Genetic Algorithm Parameter Input")
+# -------------------------------
+# 🧬 Simulated Genetic Algorithm Using CSV Dataset
+# -------------------------------
+def run_genetic_algorithm_with_data(co_r, mut_r, data):
+    """
+    Simulate a GA that selects the best program for each hour
+    based on modified ratings and random variation.
+    """
+
+    # Identify hour columns
+    hour_cols = [col for col in data.columns if "Modified Hour" in col]
+
+    schedule = []
+    for hour in hour_cols:
+        # Select program with the best rating (plus random variation)
+        data["Score"] = data[hour] + np.random.uniform(-mut_r, mut_r, len(data))
+        best_program = data.loc[data["Score"].idxmax(), "Type of Program"]
+        best_score = data.loc[data["Score"].idxmax(), hour]
+
+        schedule.append({"Hour": hour.replace("Modified ", ""), 
+                         "Program": best_program, 
+                         "Fitness Score": round(best_score, 2)})
+
+    return pd.DataFrame(schedule)
+
+# -------------------------------
+# 🎛️ Streamlit Interface
+# -------------------------------
+st.title("Genetic Algorithm Scheduler with Real Dataset")
 
 st.write("""
-Use the sliders below to adjust the **Crossover Rate (CO_R)** and **Mutation Rate (MUT_R)** 
-for your genetic algorithm.
+This app uses a **Genetic Algorithm** concept to generate a program schedule 
+based on your uploaded dataset and chosen parameters.
 """)
 
-# 🧬 Input for Crossover Rate (CO_R)
-co_r = st.slider(
-    "Crossover Rate (CO_R)",
-    min_value=0.0,
-    max_value=0.95,
-    value=0.8,
-    step=0.01,
-    help="Adjust the crossover rate (range: 0.0 to 0.95)"
-)
+# Upload CSV
+uploaded_file = st.file_uploader("Upload the program ratings CSV file", type=["csv"])
 
-# 🧪 Input for Mutation Rate (MUT_R)
-mut_r = st.slider(
-    "Mutation Rate (MUT_R)",
-    min_value=0.01,
-    max_value=0.05,
-    value=0.02,
-    step=0.01,
-    help="Adjust the mutation rate (range: 0.01 to 0.05)"
-)
+# Input sliders for parameters
+co_r = st.slider("Crossover Rate (CO_R)", 0.0, 0.95, 0.8, 0.01)
+mut_r = st.slider("Mutation Rate (MUT_R)", 0.01, 0.05, 0.02, 0.01)
 
-# 🧾 Display selected parameters
-st.subheader("Selected Parameters:")
+# Display chosen parameters
+st.subheader("Selected Parameters")
 st.write(f"**Crossover Rate (CO_R):** {co_r}")
 st.write(f"**Mutation Rate (MUT_R):** {mut_r}")
 
-# Optional: Use these values in the algorithm
-if st.button("Run Genetic Algorithm"):
-    st.success(f"Genetic Algorithm initialized with CO_R={co_r} and MUT_R={mut_r}")
+# Run GA if file uploaded
+if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
+    st.success("✅ Dataset successfully loaded!")
+    st.dataframe(data.head())
+
+    if st.button("Run Genetic Algorithm"):
+        st.info("Running Genetic Algorithm... Please wait...")
+
+        # Run GA using uploaded dataset
+        schedule_df = run_genetic_algorithm_with_data(co_r, mut_r, data)
+
+        # Display schedule table
+        st.subheader("📅 Generated Program Schedule")
+        st.dataframe(schedule_df, use_container_width=True)
+
+        # Summary statistics
+        st.subheader("📊 Summary")
+        st.write(f"Total Hours Scheduled: {len(schedule_df)}")
+        st.write(f"Unique Programs: {schedule_df['Program'].nunique()}")
+
+else:
+    st.warning("⚠️ Please upload the modified program ratings CSV file first.")
