@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 # -----------------------------------
-# 🧬 Genetic Algorithm Simulation
+# 🧬 Genetic Algorithm Simulationn
 # -----------------------------------
 def run_genetic_algorithm_with_data(co_r, mut_r, data):
     """
