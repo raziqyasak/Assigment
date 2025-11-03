@@ -32,11 +32,11 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
 # -----------------------------------
 #  Load Dataset
 # -----------------------------------
-st.title("🧬 Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
+st.title(" Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
 
 file_path = "program_ratings.csv"
 data = pd.read_csv(file_path)
-st.success(f"✅ Dataset loaded successfully from: {file_path}")
+st.success(f" Dataset loaded successfully from: {file_path}")
 
 # -----------------------------------
 #  Detect Program Column Automatically
@@ -46,13 +46,13 @@ if possible_cols:
     program_col = possible_cols[0]
     st.info(f"Automatically detected Program column: **{program_col}**")
 else:
-    st.error("❌ Could not detect a 'Program' column in the dataset.")
+    st.error(" Could not detect a 'Program' column in the dataset.")
     st.stop()
 
 # -----------------------------------
 #  Parameter Settings for 3 Trials
 # -----------------------------------
-st.subheader("🎨 Set Parameters for Each Trial")
+st.subheader(" Set Parameters for Each Trial")
 
 # --- Trial 1 (Blue) ---
 st.markdown(
@@ -93,7 +93,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 # -----------------------------------
 #  Run All Trials
 # -----------------------------------
-if st.button("🚀 Run All Trials"):
+if st.button(" Run All Trials"):
     st.info("Running all 3 genetic algorithm trials...")
 
     trials = [
