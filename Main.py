@@ -59,7 +59,7 @@ The system will automatically detect your program column and schedule columns.
 """)
 
 # Example GitHub URL (you can replace this)
-default_github_url = "https://raw.githubusercontent.com/yourusername/yourrepo/main/program_ratings_modified.csv"
+default_github_url = "https://github.com/raziqyasak/Assigment/blob/main/program_ratings.csv"
 
 # GitHub URL input
 github_url = st.text_input("Enter GitHub RAW file URL", value=default_github_url)
