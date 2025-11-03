@@ -54,19 +54,24 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data):
 st.title("🧬 Genetic Algorithm Scheduler – Multiple Trials")
 
 st.write("""
-Upload your **Program Ratings Dataset (CSV)** or auto-load the default file in the folder,
-and run the **Genetic Algorithm** three times with different parameters.
+You can **enter the full path** to your dataset file below or leave it blank to upload manually.
+The file should be a CSV file containing the program ratings.
 """)
 
-# Try to load automatically if file exists
-default_path = "program_ratings_modified.csv"
+# 🔍 Custom file path input
+file_path = st.text_input(
+    "Enter full path to your dataset (example: C:/Users/Raziq/Documents/program_ratings_modified.csv)",
+    value="program_ratings_modified.csv"
+)
+
 data = None
 
-if os.path.exists(default_path):
-    st.success(f"✅ Found local dataset: {default_path}")
-    data = pd.read_csv(default_path)
+# Try to load from the specified path
+if os.path.exists(file_path):
+    st.success(f"✅ Dataset found at: {file_path}")
+    data = pd.read_csv(file_path)
 else:
-    # Allow user to upload file if not found locally
+    st.warning("⚠️ File path not found. You can upload a CSV manually below.")
     uploaded_file = st.file_uploader("📂 Upload the modified program ratings CSV file", type=["csv"])
     if uploaded_file is not None:
         data = pd.read_csv(uploaded_file)
@@ -90,7 +95,6 @@ if data is not None:
     if st.button("🚀 Run All Trials"):
         st.info("Running all 3 genetic algorithm trials...")
 
-        # Display dataset columns to help identify structure
         st.write("### 🧾 Dataset Columns:")
         st.write(data.columns.tolist())
 
@@ -110,4 +114,4 @@ if data is not None:
             st.write(f"**Summary:** {schedule_df['Program'].nunique()} unique programs scheduled.")
             st.write("---")
 else:
-    st.warning("⚠️ No dataset found. Please upload or place 'program_ratings_modified.csv' in the same folder.")
+    st.warning("⚠️ No dataset found. Please upload a file or check your path.")
