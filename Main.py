@@ -39,17 +39,16 @@ This app automatically loads a dataset from GitHub and runs the **Genetic Algori
 three times using different Crossover (CO_R) and Mutation (MUT_R) rates.
 """)
 
-# Change this URL to your actual GitHub raw file link
-github_csv_url = "https://raw.githubusercontent.com/USERNAME/REPO/main/program_ratings_modified.csv"
+# Change this to your actual dataset path
+file_path = "C:/Users/YourName/Documents/program_ratings_modified.csv"
 
-try:
-    response = requests.get(github_csv_url)
-    response.raise_for_status()
-    data = pd.read_csv(StringIO(response.text))
-    st.success("✅ Dataset successfully loaded from GitHub!")
-except Exception as e:
-    st.error(f"❌ Failed to load dataset from GitHub. Please check the file URL.\n\nError: {e}")
+if not os.path.exists(file_path):
+    st.error(f"❌ File not found: {file_path}")
     st.stop()
+
+# Load dataset
+data = pd.read_csv(file_path)
+st.success(f"✅ Dataset loaded successfully from: {file_path}")
 
 # -----------------------------------
 # 🧭 Detect Program Column Automatically
