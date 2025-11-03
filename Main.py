@@ -30,16 +30,13 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
 
 
 # -----------------------------------
-#  Load Dataset from GitHub Path
+#  Load Dataset
 # -----------------------------------
-st.title("Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
+st.title("🧬 Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
 
-# Change this to your actual dataset path
 file_path = "program_ratings.csv"
-
-# Load dataset
 data = pd.read_csv(file_path)
-st.success(f"Dataset loaded successfully from: {file_path}")
+st.success(f"✅ Dataset loaded successfully from: {file_path}")
 
 # -----------------------------------
 #  Detect Program Column Automatically
@@ -47,31 +44,57 @@ st.success(f"Dataset loaded successfully from: {file_path}")
 possible_cols = [col for col in data.columns if "program" in col.lower()]
 if possible_cols:
     program_col = possible_cols[0]
-    st.info(f" Automatically detected Program column: **{program_col}**")
+    st.info(f"Automatically detected Program column: **{program_col}**")
 else:
-    st.error(" Could not detect a 'Program' column in the dataset.")
+    st.error("❌ Could not detect a 'Program' column in the dataset.")
     st.stop()
 
 # -----------------------------------
 #  Parameter Settings for 3 Trials
 # -----------------------------------
-st.subheader("Set Parameters for Each Trial")
+st.subheader("🎨 Set Parameters for Each Trial")
 
-col1, col2 = st.columns(2)
-with col1:
-    co_r1 = st.slider("Trial 1 – Crossover Rate (CO_R)", 0.0, 0.95, 0.8, 0.01)
-    mut_r1 = st.slider("Trial 1 – Mutation Rate (MUT_R)", 0.01, 0.05, 0.02, 0.01)
-    co_r2 = st.slider("Trial 2 – Crossover Rate (CO_R)", 0.0, 0.95, 0.6, 0.01)
-    mut_r2 = st.slider("Trial 2 – Mutation Rate (MUT_R)", 0.01, 0.05, 0.03, 0.01)
-with col2:
-    co_r3 = st.slider("Trial 3 – Crossover Rate (CO_R)", 0.0, 0.95, 0.4, 0.01)
-    mut_r3 = st.slider("Trial 3 – Mutation Rate (MUT_R)", 0.01, 0.05, 0.04, 0.01)
+# --- Trial 1 (Blue) ---
+st.markdown(
+    """
+    <div style="background-color:#e3f2fd; padding:15px; border-radius:10px; margin-bottom:10px;">
+    <h4 style="color:#1565c0;">Trial 1 Parameters</h4>
+    """,
+    unsafe_allow_html=True,
+)
+co_r1 = st.slider("Trial 1 – Crossover Rate (CO_R)", 0.0, 0.95, 0.8, 0.01)
+mut_r1 = st.slider("Trial 1 – Mutation Rate (MUT_R)", 0.01, 0.05, 0.02, 0.01)
+st.markdown("</div>", unsafe_allow_html=True)
+
+# --- Trial 2 (Green) ---
+st.markdown(
+    """
+    <div style="background-color:#e8f5e9; padding:15px; border-radius:10px; margin-bottom:10px;">
+    <h4 style="color:#2e7d32;">Trial 2 Parameters</h4>
+    """,
+    unsafe_allow_html=True,
+)
+co_r2 = st.slider("Trial 2 – Crossover Rate (CO_R)", 0.0, 0.95, 0.6, 0.01)
+mut_r2 = st.slider("Trial 2 – Mutation Rate (MUT_R)", 0.01, 0.05, 0.03, 0.01)
+st.markdown("</div>", unsafe_allow_html=True)
+
+# --- Trial 3 (Orange) ---
+st.markdown(
+    """
+    <div style="background-color:#fff3e0; padding:15px; border-radius:10px; margin-bottom:10px;">
+    <h4 style="color:#ef6c00;">Trial 3 Parameters</h4>
+    """,
+    unsafe_allow_html=True,
+)
+co_r3 = st.slider("Trial 3 – Crossover Rate (CO_R)", 0.0, 0.95, 0.4, 0.01)
+mut_r3 = st.slider("Trial 3 – Mutation Rate (MUT_R)", 0.01, 0.05, 0.04, 0.01)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------------
 #  Run All Trials
 # -----------------------------------
-if st.button("Run All Trials"):
-    st.info("🧬 Running all 3 genetic algorithm trials...")
+if st.button("🚀 Run All Trials"):
+    st.info("Running all 3 genetic algorithm trials...")
 
     trials = [
         ("Trial 1", co_r1, mut_r1),
@@ -80,7 +103,7 @@ if st.button("Run All Trials"):
     ]
 
     for name, co_r, mut_r in trials:
-        st.subheader(f" {name}")
+        st.subheader(f"{name}")
         st.write(f"**Parameters:** CO_R = {co_r}, MUT_R = {mut_r}")
 
         schedule_df = run_genetic_algorithm_with_data(co_r, mut_r, data, program_col)
