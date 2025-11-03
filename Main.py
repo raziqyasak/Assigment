@@ -34,11 +34,6 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
 # -----------------------------------
 st.title("Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
 
-st.write("""
-This app automatically loads a dataset from GitHub and runs the **Genetic Algorithm (GA)**
-three times using different Crossover (CO_R) and Mutation (MUT_R) rates.
-""")
-
 # Change this to your actual dataset path
 file_path = "program_ratings.csv"
 
