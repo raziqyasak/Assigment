@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import os
+import requests
+import io
 
 # -----------------------------------
 # 🧬 Genetic Algorithm Simulation
@@ -11,7 +12,7 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data):
     Simulate a GA that selects the best program for each hour
     based on modified ratings and random variation.
     """
-    # Detect the correct program column automatically
+    # Detect program column automatically
     possible_program_cols = ["Program", "Type of Program", "Program Name", "Programme"]
     program_col = None
     for col in data.columns:
@@ -23,7 +24,7 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data):
         st.error("❌ Could not find a 'Program' column in your dataset.")
         st.stop()
 
-    # Detect modified hour columns
+    # Detect columns with 'Modified Hour'
     hour_cols = [col for col in data.columns if "Modified Hour" in col]
 
     if not hour_cols:
@@ -32,7 +33,6 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data):
 
     schedule = []
 
-    # Genetic algorithm simulation: choose best program for each hour
     for hour in hour_cols:
         data["Score"] = data[hour] + np.random.uniform(-mut_r, mut_r, len(data))
         best_idx = data["Score"].idxmax()
@@ -51,28 +51,39 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data):
 # -----------------------------------
 # 🎛️ Streamlit Interface
 # -----------------------------------
-st.title("🧬 Genetic Algorithm Scheduler – Multiple Trials")
+st.title("🧬 Genetic Algorithm Scheduler – Multiple Trials (GitHub Dataset)")
 
 st.write("""
-You can **enter the full path** to your dataset file below or leave it blank to upload manually.
-The file should be a CSV file containing the program ratings.
+You can provide the **GitHub raw file URL** of your dataset (CSV format), 
+or upload it manually if it's not online yet.
 """)
 
-# 🔍 Custom file path input
-file_path = st.text_input(
-    "Enter full path to your dataset (example: C:/Users/Raziq/Documents/program_ratings_modified.csv)",
-    value="program_ratings_modified.csv"
+# Example GitHub URL (you can edit this!)
+default_github_url = "https://raw.githubusercontent.com/yourusername/yourrepo/main/program_ratings_modified.csv"
+
+# Input for GitHub path
+github_url = st.text_input(
+    "Enter the GitHub RAW file URL of your dataset",
+    value=default_github_url
 )
 
 data = None
 
-# Try to load from the specified path
-if os.path.exists(file_path):
-    st.success(f"✅ Dataset found at: {file_path}")
-    data = pd.read_csv(file_path)
-else:
-    st.warning("⚠️ File path not found. You can upload a CSV manually below.")
-    uploaded_file = st.file_uploader("📂 Upload the modified program ratings CSV file", type=["csv"])
+# Try to load dataset from GitHub
+if github_url and github_url.startswith("http"):
+    try:
+        response = requests.get(github_url)
+        if response.status_code == 200:
+            data = pd.read_csv(io.StringIO(response.text))
+            st.success("✅ Dataset successfully loaded from GitHub!")
+        else:
+            st.warning("⚠️ Unable to load from GitHub. Check the URL or repository access.")
+    except Exception as e:
+        st.error(f"❌ Error loading from GitHub: {e}")
+
+# If GitHub loading fails, allow manual upload
+if data is None:
+    uploaded_file = st.file_uploader("📂 Or upload your modified program ratings CSV file", type=["csv"])
     if uploaded_file is not None:
         data = pd.read_csv(uploaded_file)
         st.success("✅ Dataset successfully uploaded!")
@@ -114,4 +125,4 @@ if data is not None:
             st.write(f"**Summary:** {schedule_df['Program'].nunique()} unique programs scheduled.")
             st.write("---")
 else:
-    st.warning("⚠️ No dataset found. Please upload a file or check your path.")
+    st.warning("⚠️ No dataset found. Please check your GitHub link or upload a CSV.")
