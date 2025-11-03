@@ -42,10 +42,6 @@ three times using different Crossover (CO_R) and Mutation (MUT_R) rates.
 # Change this to your actual dataset path
 file_path = "program_ratings.csv"
 
-if not os.path.exists(file_path):
-    st.error(f"❌ File not found: {file_path}")
-    st.stop()
-
 # Load dataset
 data = pd.read_csv(file_path)
 st.success(f"✅ Dataset loaded successfully from: {file_path}")
