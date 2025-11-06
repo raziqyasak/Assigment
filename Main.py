@@ -1,25 +1,35 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import requests
-from io import StringIO
- 
+import random
+
 # -----------------------------------
-# 🧬 Genetic Algorithm Simulation
+# 🧬 Improved Genetic Algorithm Simulation
 # -----------------------------------
 def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
     """
-    Simulate a GA that selects the best program for each hour
-    based on modified ratings and random variation.
+    Simulate a GA where crossover and mutation rates influence total fitness.
     """
     hour_cols = [col for col in data.columns if "Modified Hour" in col or "Hour" in col]
     schedule = []
 
-    for hour in hour_cols:
-        # Add random variation based on mutation rate
-        data["Score"] = data[hour] + np.random.uniform(-mut_r, mut_r, len(data))
-        best_row = data.loc[data["Score"].idxmax()]
+    # Apply crossover and mutation effects
+    base_df = data.copy()
 
+    # Introduce small randomness based on mutation rate
+    for hour in hour_cols:
+        noise = np.random.uniform(-mut_r, mut_r, len(base_df))
+        base_df[hour] = np.clip(base_df[hour] + noise, 0, 1)
+
+    # Combine ratings for all hours weighted by crossover rate
+    for hour in hour_cols:
+        # Simulate crossover by blending with another random column
+        if random.random() < co_r:
+            partner_hour = random.choice(hour_cols)
+            base_df[hour] = (base_df[hour] + base_df[partner_hour]) / 2
+
+        # Pick the best program for this hour
+        best_row = base_df.loc[base_df[hour].idxmax()]
         schedule.append({
             "Hour": hour.replace("Modified ", ""),
             "Program": best_row[program_col],
@@ -32,7 +42,7 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
 # -----------------------------------
 # 📂 Load Dataset
 # -----------------------------------
-st.title(" Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
+st.title(" Genetic Algorithm Scheduler – Multiple Trials (Dynamic Rating)")
 
 file_path = "program_ratings (1).csv"
 data = pd.read_csv(file_path)
@@ -115,5 +125,5 @@ if st.button("🚀 Run All Trials"):
         total_rating = round(schedule_df['Fitness Score'].sum(), 2)
 
         st.write(f"**Summary:** {unique_programs} unique programs scheduled.")
-        st.write(f"**Total Rating:** 🌟 {total_rating}")
+        st.success(f"🌟 **Total Rating:** {total_rating}")
         st.write("---")
