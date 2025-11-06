@@ -5,7 +5,7 @@ import requests
 from io import StringIO
  
 # -----------------------------------
-#  Genetic Algorithm Simulation
+# 🧬 Genetic Algorithm Simulation
 # -----------------------------------
 def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
     """
@@ -30,29 +30,29 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
 
 
 # -----------------------------------
-#  Load Dataset
+# 📂 Load Dataset
 # -----------------------------------
-st.title(" Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
+st.title("🧩 Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
 
 file_path = "program_ratings (1).csv"
 data = pd.read_csv(file_path)
-st.success(f" Dataset loaded successfully from: {file_path}")
+st.success(f"✅ Dataset loaded successfully from: {file_path}")
 
 # -----------------------------------
-#  Detect Program Column Automatically
+# 🔍 Detect Program Column Automatically
 # -----------------------------------
 possible_cols = [col for col in data.columns if "program" in col.lower()]
 if possible_cols:
     program_col = possible_cols[0]
     st.info(f"Automatically detected Program column: **{program_col}**")
 else:
-    st.error(" Could not detect a 'Program' column in the dataset.")
+    st.error("❌ Could not detect a 'Program' column in the dataset.")
     st.stop()
 
 # -----------------------------------
-#  Parameter Settings for 3 Trials
+# ⚙️ Parameter Settings for 3 Trials
 # -----------------------------------
-st.subheader(" Set Parameters for Each Trial")
+st.subheader("⚙️ Set Parameters for Each Trial")
 
 # --- Trial 1 (Blue) ---
 st.markdown(
@@ -91,9 +91,9 @@ mut_r3 = st.slider("Trial 3 – Mutation Rate (MUT_R)", 0.01, 0.05, 0.04, 0.01)
 st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------------
-#  Run All Trials
+# ▶️ Run All Trials
 # -----------------------------------
-if st.button(" Run All Trials"):
+if st.button("🚀 Run All Trials"):
     st.info("Running all 3 genetic algorithm trials...")
 
     trials = [
@@ -106,7 +106,14 @@ if st.button(" Run All Trials"):
         st.subheader(f"{name}")
         st.write(f"**Parameters:** CO_R = {co_r}, MUT_R = {mut_r}")
 
+        # Run GA
         schedule_df = run_genetic_algorithm_with_data(co_r, mut_r, data, program_col)
         st.dataframe(schedule_df, use_container_width=True)
-        st.write(f"**Summary:** {schedule_df['Program'].nunique()} unique programs scheduled.")
+
+        # --- Summary Info (Added Rating) ---
+        unique_programs = schedule_df['Program'].nunique()
+        avg_rating = round(schedule_df['Fitness Score'].mean(), 2)
+
+        st.write(f"**Summary:** {unique_programs} unique programs scheduled.")
+        st.write(f"**Average Rating:** ⭐ {avg_rating}")
         st.write("---")
