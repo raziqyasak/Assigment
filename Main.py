@@ -32,7 +32,7 @@ def run_genetic_algorithm_with_data(co_r, mut_r, data, program_col):
 # -----------------------------------
 # 📂 Load Dataset
 # -----------------------------------
-st.title("🧩 Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
+st.title(" Genetic Algorithm Scheduler – Multiple Trials (GitHub Data)")
 
 file_path = "program_ratings (1).csv"
 data = pd.read_csv(file_path)
@@ -110,10 +110,10 @@ if st.button("🚀 Run All Trials"):
         schedule_df = run_genetic_algorithm_with_data(co_r, mut_r, data, program_col)
         st.dataframe(schedule_df, use_container_width=True)
 
-        # --- Summary Info (Added Rating) ---
+        # --- Summary Info (Total Rating Only) ---
         unique_programs = schedule_df['Program'].nunique()
-        avg_rating = round(schedule_df['Fitness Score'].mean(), 2)
+        total_rating = round(schedule_df['Fitness Score'].sum(), 2)
 
         st.write(f"**Summary:** {unique_programs} unique programs scheduled.")
-        st.write(f"**Average Rating:** ⭐ {avg_rating}")
+        st.write(f"**Total Rating:** 🌟 {total_rating}")
         st.write("---")
