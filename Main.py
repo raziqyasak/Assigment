@@ -103,7 +103,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 # -----------------------------------
 # ▶️ Run All Trials
 # -----------------------------------
-if st.button("🚀 Run All Trials"):
+if st.button(" Run All Trials"):
     st.info("Running all 3 genetic algorithm trials...")
 
     trials = [
@@ -125,5 +125,5 @@ if st.button("🚀 Run All Trials"):
         total_rating = round(schedule_df['Fitness Score'].sum(), 2)
 
         st.write(f"**Summary:** {unique_programs} unique programs scheduled.")
-        st.success(f"🌟 **Total Rating:** {total_rating}")
+        st.success(f"**Total Rating:** {total_rating}")
         st.write("---")
